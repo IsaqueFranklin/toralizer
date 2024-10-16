@@ -1,6 +1,12 @@
 /* toralize.c */
 #include "toralize.h"
 
+Req *request(const char *dstip, const int dstport) {
+  Req *req;
+
+  req = malloc(reqsize)
+}
+
 int main(int argc, char *argv[]){
   char *host;
   int port, s;
@@ -26,7 +32,7 @@ int main(int argc, char *argv[]){
   sock.sin_port = htons(PROXYPORT);
   sock.sin_addr.s_addr = inet_addr(PROXY);
 
-  if (connect(s, (struct sockaddr *)&sock, sizeof(sock))){
+  if (connect(s, (struct sockaddr *)&sock, sizeof(sock))) {
     perror("connect");
 
     return -1;
