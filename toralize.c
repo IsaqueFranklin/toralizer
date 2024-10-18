@@ -4,7 +4,13 @@
 Req *request(const char *dstip, const int dstport) {
   Req *req;
 
-  req = malloc(reqsize)
+  req = malloc(reqsize);
+
+  req->vn = 4;
+  req->cd = 1;
+  req->dstport = htons(dstport);
+  req->dstip = inet_addr(dstip);
+  strncpy(req->username, USERNAME, 7);
 }
 
 int main(int argc, char *argv[]){
