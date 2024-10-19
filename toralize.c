@@ -20,6 +20,7 @@ int main(int argc, char *argv[]){
   int port, s;
   struct sockaddr_in sock;
   Req *req;
+  char buff[ressize];
 
   if (argc < 3) {
     fprintf(stderr, "Usage: $s <host> <port>\n",
@@ -50,6 +51,14 @@ int main(int argc, char *argv[]){
   printf("Connected to proxy\n");
   req = request(host, port);
   write(s, req, reqsize);
+  meset(buff, 0, ressize);
+  if (read(s, buff, ressize) < 1) {
+    perror("read");
+    free(req);
+    close(s);
+
+    return -1;
+  }
 
   close(s);
 
