@@ -10,7 +10,7 @@ Req *request(const char *dstip, const int dstport) {
   req->cd = 1;
   req->dstport = htons(dstport);
   req->dstip = inet_addr(dstip);
-  strncpy(req->username, USERNAME, 8);
+  strncpy(req->userid, USERNAME, 8);
 
   return req;
 }
@@ -20,7 +20,11 @@ int main(int argc, char *argv[]){
   int port, s;
   struct sockaddr_in sock;
   Req *req;
+  Res *res;
   char buff[ressize];
+  int success;
+
+  /* predicate: a function that returns true or false */
 
   if (argc < 3) {
     fprintf(stderr, "Usage: $s <host> <port>\n",
@@ -51,7 +55,8 @@ int main(int argc, char *argv[]){
   printf("Connected to proxy\n");
   req = request(host, port);
   write(s, req, reqsize);
-  meset(buff, 0, ressize);
+  memset(buff, 0, ressize);
+
   if (read(s, buff, ressize) < 1) {
     perror("read");
     free(req);
@@ -60,9 +65,22 @@ int main(int argc, char *argv[]){
     return -1;
   }
 
-  close(s);
+  res = (Res *)buff;
+  success = (res->cd == 90);
 
+  if (!success) {
+    fprintf(stderr, "Unable to traverse the proxy, error code: %d\n", res->cd);
+
+    close(s);
+    free(req);
+
+    return -1;
+  }
+
+  printf("Scucessfully connected through the proxy to \n" "%s:%d\n", host, port);
+  close(s);
+  free(req);
+  
   return 0;
 }
-
 // ./toralize 1.2.3.4 80
