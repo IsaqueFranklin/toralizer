@@ -10,13 +10,16 @@ Req *request(const char *dstip, const int dstport) {
   req->cd = 1;
   req->dstport = htons(dstport);
   req->dstip = inet_addr(dstip);
-  strncpy(req->username, USERNAME, 7);
+  strncpy(req->username, USERNAME, 8);
+
+  return req;
 }
 
 int main(int argc, char *argv[]){
   char *host;
   int port, s;
   struct sockaddr_in sock;
+  Req *req;
 
   if (argc < 3) {
     fprintf(stderr, "Usage: $s <host> <port>\n",
@@ -45,6 +48,9 @@ int main(int argc, char *argv[]){
   }
 
   printf("Connected to proxy\n");
+  req = request(host, port);
+  write(s, req, reqsize);
+
   close(s);
 
   return 0;
